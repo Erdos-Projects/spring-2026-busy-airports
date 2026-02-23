@@ -3,10 +3,13 @@
 
 **Team members**: *David Friedenberg, Agniva Dasgupta, Charuhas Shiveshwarkar, Ivan Caro Terrazas, Ahmad Shamloumehr*
 
-Have you ever waited in line at an airport that felt too small for the number of flights it handles? Or walked through a massive empty airport and wondered if all that space is really necessary? This project aims to answer these questions using a data-driven approach.
+**Problem**: Airports in the United States serve as critical transportation hubs. handling hundreds of millions of travelers each year. One of the most significant bottlenecks in air travel is the TSA security checkpoint. For TSA directors, accurately forecasting passenger volume is essential for effective staffing and resource allocation. Reliable predictions of hourly throughput can also help travelers anticipate longer-than-usual wait times and plan accordingly.
 
-**Objective**: Analyze airport data and flight data from airports around the world and train a machine learning regression model to predict the expected number of daily/weekly flights based on airport type, size, country, location, and altitude. By comparing the model predictions with actual flight activity, we can identify airports which are busier/quieter than expected.
+**Objective**: The goal of this project is to develop a predictive model for passenger throughput at TSA security checkpoints. We will begin by building and validating the model for a single airport to establish feasibility and performance. The model will forecast total passenger volume over selected future timescales (e.g. daily, weekly totals) with the flexibility to evaluate which forecasting window (days, weeks, or potentially months) yields the most reliable results. In addition to point forecasts, the model will provide uncertainty estimates to quantify confidence in its predictions.
 
-**Deliverable Goals**: A global map highlighting airports with disproportionately high or low flight activity, giving insights into where infrastructure and resources may be under- or over-utilized, informing potential planning or investment decisions.
+If the single-airport model performs well, we plan to extend the framework to multiple US airports using a combined time series and regression approach. This expanded model will incorporate both temporal features and static airport characteristics (e.g., geographic location, airport size, regional demographics) to generalize predictions across locations.
 
-**Data sources**: OurAirports.com (global airport data), OpenSky Network (daily/weekly flight activity data), OpenFlights.org (airports and flight activity), https://www.adsb.lol (open source flight tracking data)
+**Data Sources**:
+1. [TSA Hourly Passenger Throughput](https://catalog.data.gov/dataset/tsa-foia-reading-room-weekly-passenger-throughput-data)
+2. [General airport information (US Airports only)](https://geodata.bts.gov/datasets/usdot::aviation-facilities/about)
+3. [City and Towns Population totals](https://www.census.gov/data/tables/time-series/demo/popest/2020s-total-cities-and-towns.html)
