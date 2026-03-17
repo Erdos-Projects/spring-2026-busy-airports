@@ -19,7 +19,11 @@ def load_data(path):
     df = df.drop_duplicates()
     return df
 
-def retrieve_airport_data(df, airport="ORD"):
+def retrieve_airport_data(df, airport="ORD", frequency='W'):
+
+    if frequency not in ['D', 'W', 'M']:
+        raise ValueError("Invalid frequency. Use 'D' for daily, 'W' for weekly, or 'M' for monthly.")
+
     #Keep only dataframe of working airport
     df.drop(df[df['airport_code'] != airport].index, inplace=True)
 
@@ -32,10 +36,15 @@ def retrieve_airport_data(df, airport="ORD"):
     #df = df[['datetime','total_passenger_throughput']]
     #df = df.groupby(by=['date'],as_index=False).sum()
     df['datetime'] = pd.to_datetime(df['datetime'])
-    df = df.groupby(pd.Grouper(key='datetime', freq='W'))['total_passenger_throughput'].sum().iloc[1:-1].reset_index() 
+    df = df.groupby(pd.Grouper(key='datetime', freq=frequency))['total_passenger_throughput'].sum().iloc[1:-1].reset_index() 
 
     #df['week'] = pd.to_datetime(df['datetime']).dt.strftime('%U').astype(int)
-    df['week'] = df['datetime'].dt.isocalendar().week.astype(int)
+    if frequency == 'W':
+        df['week'] = df['datetime'].dt.isocalendar().week.astype(int)
+    elif frequency == 'M':
+        df['month'] = df['datetime'].dt.month.astype(int)
+    elif frequency == 'D':
+        df['day'] = df['datetime'].dt.day.astype(int)
     
     return df
 
