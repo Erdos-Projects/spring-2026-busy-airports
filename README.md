@@ -11,6 +11,8 @@
 5. [Results](#Results)
 6. [Future Work](#Future-Work)
 7. [Description of Repository](#Description-of-Repository)
+8. [Repository Structure](#Repository-Structure)
+9. [How To Run The Project](#How-To-Run-The-Project)
 
 ## Introduction
 Airports in the United States serve as critical transportation hubs. handling hundreds of millions of travelers each year. One of the most significant bottlenecks in air travel is the TSA security checkpoint. For TSA directors, accurately forecasting passenger volume is essential for effective staffing and resource allocation. Reliable predictions of hourly throughput can also help travelers anticipate longer-than-usual wait times and plan accordingly.
@@ -31,3 +33,46 @@ Dataset Source: [TSA Hourly Passenger Throughput](https://catalog.data.gov/datas
 ## Future Work
 
 ## Description of Repository
+
+## Repository Structure
+
+```
+spring-2026-busy-airports/
+│
+├── data/
+│   └── tsa-throughput-data-complete.csv
+│
+├── src/
+│   └── preprocessing.py
+│   └── other.py
+│
+├── busy_airports.ipynb
+│
+├── README.md
+└── environment.yml
+```
+
+---
+
+## How to run the project
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/Erdos-Projects/spring-2026-busy-airports.git
+cd spring-2026-busy-airports
+```
+
+2. **Install the required dependencies**
+
+Using Anaconda
+```bash
+conda env create -f environment.yml
+conda activate busy_airports
+```
+
+3. **Open the notebook and run the cells sequentially**
+
+Open the file `busy_airports.ipynb` and execute the cells from top to bottom.
+
+---
