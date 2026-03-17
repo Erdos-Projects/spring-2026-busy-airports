@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def load_data(path, airport="ORD"):
+def load_data(path):
     """
     Load dataset from CSV file and parse timestamp column.
     """
@@ -9,7 +9,17 @@ def load_data(path, airport="ORD"):
 
     #cleaning up the column names
     df.columns = [t.partition('(')[0].strip().lower().replace(' ', '_') for t in df.columns]
-    
+
+    #Extracting date info
+    df['datetime'] = pd.to_datetime(df['datetime'])
+    df['date'] = pd.to_datetime(df['datetime']).dt.date
+    df['month'] = pd.to_datetime(df['datetime']).dt.month
+    df['week'] = df['datetime'].dt.isocalendar().week.astype(int)
+
+    df = df.drop_duplicates()
+    return df
+
+def retrieve_airport_data(df, airport="ORD"):
     #Keep only dataframe of working airport
     df.drop(df[df['airport_code'] != airport].index, inplace=True)
 
