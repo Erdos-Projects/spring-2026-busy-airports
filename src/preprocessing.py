@@ -44,7 +44,7 @@ def retrieve_airport_data(df, airport="ORD", frequency='W'):
     elif frequency == 'M':
         df['month'] = df['datetime'].dt.month.astype(int)
     elif frequency == 'D':
-        df['day'] = df['datetime'].dt.day.astype(int)
+        df['day'] = df['datetime'].dt.dayofyear.astype(int)
     
     return df
 
