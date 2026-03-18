@@ -33,6 +33,16 @@ The scripts for reading the PDF files, identifying tabulated data, processing th
 ---
 ## Exploratory Data Analysis
 
+Our exploratory data analysis involved visualizing TSA Throughput data specifically at Chicago O'Hare International Airport, which was chosen to be the focus of our modelling approach. We started by plotting the total hourly, daily, and monthly throughput data.
+
+![ord_hourly](./images/ord_hourly.png "Hourly Throughput Data - ORD, All Checkpoints")
+![ord_daily](./images/ord_daily.png "Daily Throughput Data - ORD, All Checkpoints")
+![ord_weekly](./images/ord_weekly.png "Weekly Throughput Data - ORD, All Checkpoints")
+
+The hourly data seems far too noisy to make meaningful predictions and also involves timeframes too small for long-term forecasting. This convinced us to focus only on modeling the daily and weekly data.
+
+
+
 ---
 ## Modeling Approach
 
