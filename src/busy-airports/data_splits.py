@@ -1,30 +1,35 @@
-import numpy as np
+"""
+data_splits.py
+
+Functions for Time Series data splits for Cross-Validation
+"""
+
 import pandas as pd
 
-from sklearn.metrics import mean_squared_error as mse
-from sklearn.metrics import mean_absolute_error as mae
-from sklearn.metrics import mean_absolute_percentage_error as mape
-
-#General function to measure different types of errors in predictions
-def evaluate_forecast(actual, predicted, model_name):
-    mae  = np.mean(np.abs(actual - predicted))
-    mape = np.mean(np.abs((actual - predicted) / actual)) * 100
-    rmse = np.sqrt(np.mean((actual - predicted) ** 2))
-    print(f"\n{model_name}")
-    print(f"  MAE:  {mae:,.0f}")
-    print(f"  MAPE: {mape:.2f}%")
-    print(f"  RMSE: {rmse:,.0f}")
-    return {'mae': mae, 'mape': mape, 'rmse': rmse}
-
-
-#General functions for the timeseries splits we will use for cross validation
-
 def make_rolling_splits(df, date_col, n_splits, step_days):
+    """
+    Create rolling data splits over daily time series data starting with first two years
 
-    #df - pandas DataFrame containing the time series data
-    #date_col - name of the column in df that contains the date information
-    #n_splits - number of splits to create 
-    #step_days - number of days to step by for each split
+    Parameters
+    ----------
+    df : pd.DataFrame
+        pandas DataFrame containing the daily time series data
+    date_col : str
+        name of the column in df that contains the date information
+    n_splits : int
+        number of splits to create 
+    step_days : int
+        number of days to step by for each split
+    
+    Returns
+    -------
+    splits : list
+        list of train, test splits for each rolling window
+
+    Examples
+    --------
+    >>> make_rolling_splits(ord_daily_data, date_col='datetime', n_splits=5, step_days=90)
+    """
 
     df = df.copy()
     df[date_col] = pd.to_datetime(df[date_col])
@@ -51,14 +56,33 @@ def make_rolling_splits(df, date_col, n_splits, step_days):
               f"({len(test_idx)} days)")
 
     return splits
-#Example use:  make_rolling_splits(ord_daily_data, date_col='DateTime', n_splits=5, step_days=90)
 
 def make_rolling_splits_weekly(df, date_col, n_splits, step_weeks, base_weeks=104):
-    # df         - pandas DataFrame containing the time series data
-    # date_col   - name of the column with weekly period/date info
-    # n_splits   - number of splits to create
-    # step_weeks - weeks to step by per split (default 13 = 1 quarter)
-    # base_weeks - size of the initial training window (default 104 = 2 years)
+    """
+    Create rolling data splits over weekly time series data starting with base number of weeks
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        pandas DataFrame containing the weekly time series data
+    date_col : str
+        name of the column in df that contains the weekly date information
+    n_splits : int
+        number of splits to create
+    step_weeks : int
+        number of weeks to step by per split
+    base_weeks : int
+        size of the initial training window (default 104 = 2 years)
+    
+    Returns
+    -------
+    splits : list
+        list of train, test splits for each rolling window
+
+    Examples
+    --------
+    >>> make_rolling_splits_weekly(ord_weekly_data, date_col='datetime', n_splits=5, step_weeks=13)
+    """
 
     df = df.copy()
     df[date_col] = pd.to_datetime(df[date_col])
@@ -87,6 +111,3 @@ def make_rolling_splits_weekly(df, date_col, n_splits, step_weeks, base_weeks=10
               f"({len(test_idx)} weeks)")
 
     return splits
-
-# Example use:
-# make_rolling_splits_weekly(df, date_col='datetime', n_splits=5)
