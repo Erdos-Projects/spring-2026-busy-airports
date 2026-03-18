@@ -55,6 +55,10 @@ spring-2026-busy-airports/
 ├── src/
 │   └── preprocessing.py
 │   └── other.py
+|
+├── scripts/
+│   └── cleanup_csv_data.py
+│   └── extract_pdf_data.py
 │
 ├── busy_airports.ipynb
 │
@@ -64,7 +68,7 @@ spring-2026-busy-airports/
 
 ---
 
-## How to run the project
+## How To Run The Project
 
 1. **Clone the repository**
 
