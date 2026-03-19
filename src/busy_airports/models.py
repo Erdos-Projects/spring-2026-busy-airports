@@ -36,7 +36,7 @@ class HarmonicARIMA:
     def conf_int(self, ts_index, alpha=0.05):
         X_fourier = fourier_features(ts_index, m = self.season_length, k = self.n_freq)
         results = self.fitted_model.get_forecast(steps = len(ts_index), exog = X_fourier)
-        return results.conf_int(alpha=0.05)
+        return results.conf_int(alpha=alpha)
 
 # STL model with Daily Data
 class STLDaily:
