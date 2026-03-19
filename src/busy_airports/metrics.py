@@ -30,8 +30,8 @@ def evaluate_forecast(actual, predicted, model_name):
     mae = mean_absolute_error(actual, predicted)
     mape = mean_absolute_percentage_error(actual, predicted)
     rmse = np.sqrt(mean_squared_error(actual, predicted))
-    print(f"\n{model_name}")
-    print(f"  MAE:  {mae:,.0f}")
-    print(f"  MAPE: {mape:.2f}%")
-    print(f"  RMSE: {rmse:,.0f}")
+    #print(f"\n{model_name}")
+    #print(f"  MAE:  {mae:,.0f}")
+    #print(f"  MAPE: {mape*100:.2f}%")
+    #print(f"  RMSE: {rmse:,.0f}")
     return {'mae': mae, 'mape': mape, 'rmse': rmse}
