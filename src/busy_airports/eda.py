@@ -53,11 +53,9 @@ def plot_airport_data(df, airport="ORD", frequency='D', checkpoint="all"):
             df_query = (
                 df_query
                 .groupby(pd.Grouper(key='datetime', freq=frequency))['total_passenger_throughput']
-                .sum()
+                .sum().iloc[1:-1]
                 .reset_index()
             )
-        if frequency == 'W':
-            df_query = df_query[1:-1].reset_index(drop=True)
         plt.plot(
             df_query['datetime'],
             df_query['total_passenger_throughput'],
@@ -65,7 +63,7 @@ def plot_airport_data(df, airport="ORD", frequency='D', checkpoint="all"):
         )
     plt.title(
         f'{freq_names[frequency]} TSA Throughput - ' +
-        (f'{ap}, ' if len(airports) == 1 else '') +
+        (f'{airports[0]}, ' if len(airports) == 1 else '') +
         (f'Checkpoint {checkpoint}' if checkpoint != "all" else 'All Checkpoints')
     )
     plt.xlabel('Date/Time')

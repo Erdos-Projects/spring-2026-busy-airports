@@ -57,25 +57,24 @@ def retrieve_airport_data(df, airport="ORD", frequency='W'):
         raise ValueError("Invalid frequency. Use 'D' for daily, 'W' for weekly, or 'M' for monthly.")
 
     #Keep only dataframe of working airport
-    df.drop(df[df['airport_code'] != airport].index, inplace=True)
-
+    df_airport = df[df['airport_code'] == airport]    
     #Drop cases of zero passengers
-    df.drop(df[df['total_passenger_throughput'] == 0].index, inplace=True)
+    df_airport.drop(df_airport[df_airport['total_passenger_throughput'] == 0].index, inplace=True)
 
-    df['date'] = pd.to_datetime(df['datetime']).dt.date
-    df['month'] = pd.to_datetime(df['datetime']).dt.month
+    df_airport['date'] = pd.to_datetime(df_airport['datetime']).dt.date
+    df_airport['month'] = pd.to_datetime(df_airport['datetime']).dt.month
 
-    #df = df[['datetime','total_passenger_throughput']]
-    #df = df.groupby(by=['date'],as_index=False).sum()
-    df['datetime'] = pd.to_datetime(df['datetime'])
-    df = df.groupby(pd.Grouper(key='datetime', freq=frequency))['total_passenger_throughput'].sum().iloc[1:-1].reset_index() 
+    #df_airport = df_airport[['datetime','total_passenger_throughput']]
+    #df_airport = df_airport.groupby(by=['date'],as_index=False).sum()
+    df_airport['datetime'] = pd.to_datetime(df_airport['datetime'])
+    df_airport = df_airport.groupby(pd.Grouper(key='datetime', freq=frequency))['total_passenger_throughput'].sum().iloc[1:-1].reset_index() 
 
-    #df['week'] = pd.to_datetime(df['datetime']).dt.strftime('%U').astype(int)
+    #df_airport['week'] = pd.to_datetime(df_airport['datetime']).dt.strftime('%U').astype(int)
     if frequency == 'W':
-        df['week'] = df['datetime'].dt.isocalendar().week.astype(int)
+        df_airport['week'] = df_airport['datetime'].dt.isocalendar().week.astype(int)
     elif frequency == 'M':
-        df['month'] = df['datetime'].dt.month.astype(int)
+        df_airport['month'] = df_airport['datetime'].dt.month.astype(int)
     elif frequency == 'D':
-        df['day'] = df['datetime'].dt.dayofyear.astype(int)
+        df_airport['day'] = df_airport['datetime'].dt.dayofyear.astype(int)
     
-    return df
+    return df_airport
