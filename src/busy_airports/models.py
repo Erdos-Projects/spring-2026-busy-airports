@@ -6,24 +6,37 @@ Forecasting models for TSA data
 
 import numpy as np
 import pandas as pd
+from statsmodels.tsa.api import SARIMAX
+from busy_airports.harmonic_model import fourier_features
 
-# Harmonic Regression with Daily Data
-class HarmonicDaily:
-    def __init__(self, season_length):
-        pass
-    def fit(self, ts):
-        pass
-    def forecast(self, h):
-        pass
+# Harmonic Regression model with daily throughput data
+class HarmonicARIMA:
 
-# Harmonic Regression with Weekly Data
-class HarmonicWeekly:
-    def __init__(self, season_length):
-        pass
+    def __init__(self, season_length, n_freq, arima_order, seasonal_order, with_intercept):
+        self.season_length = season_length
+        self.n_freq = n_freq
+        self.arima_order = arima_order
+        self.seasonal_order = seasonal_order
+        self.arima_trend = ('c' if with_intercept else 'n')
+    
     def fit(self, ts):
-        pass
-    def forecast(self, h):
-        pass
+        X_fourier = fourier_features(ts, m = self.season_length, k = self.n_freq)
+        sarimax_model = SARIMAX(ts,
+                                exog = X_fourier,
+                                order = self.arima_order,
+                                seasonal_order = self.seasonal_order,
+                                trend = self.arima_trend)
+        self.fitted_model = sarimax_model.fit()
+    
+    def forecast(self, ts):
+        X_fourier = fourier_features(ts, m = self.season_length, k = self.n_freq)
+        results = self.fitted_model.get_forecast(steps = len(ts), exog = X_fourier)
+        return results.predicted_mean
+    
+    def conf_int(self, ts, alpha=0.05):
+        X_fourier = fourier_features(ts, m = self.season_length, k = self.n_freq)
+        results = self.fitted_model.get_forecast(steps = len(ts), exog = X_fourier)
+        return results.conf_int(alpha=0.05)
 
 # STL model with Daily Data
 class STLDaily:
