@@ -22,6 +22,8 @@ Airports in the United States serve as critical transportation hubs. handling hu
 
 **Objective**: The goal of this project is to develop a predictive model for passenger throughput at TSA security checkpoints. We will begin by building and validating the model for a single airport to establish feasibility and performance. The model will forecast total passenger volume over selected future timescales (e.g. daily, weekly totals) with the flexibility to evaluate which forecasting window (days, weeks, or potentially months) yields the most reliable results. Once the single-airport model performs well, we can extend the framework to multiple US airports to test the robustness of the modeling methods.
 
+**Stakeholders**: TSA, Airport operators/managers who make quarterly funding decisions... (to be filled in later)
+
 ---
 ## Dataset Generation
 Dataset Source: [TSA Hourly Passenger Throughput](https://catalog.data.gov/dataset/tsa-foia-reading-room-weekly-passenger-throughput-data)
