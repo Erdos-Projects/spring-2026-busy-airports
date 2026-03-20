@@ -71,6 +71,7 @@ For our baseline models, we chose to use the Naive Seasonal Model with Drift and
 
 ![baseline_compare](./images/baseline_compare.png "Comparing Baselines - Daily Throughput Data")
 ![baseline_forecasts](./images/baseline_forecasts.png "Comparing Baseline Forecasts")
+![baseline_weekly](./images/baseline_weekly.png "Baseline models on weekly data")
 
 Clearly with the weekly data the baseline models do a much better job of matching the trend. These are the models that we aimed to beat with our own approaches.
 
