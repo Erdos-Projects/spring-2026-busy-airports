@@ -77,27 +77,9 @@ class HarmonicARIMA:
         self.fitted_model = sarimax_model.fit(maxiter=maxiter)
         return self.fitted_model.summary()
     
-    def forecast(self, ts_index):
+    def forecast(self, ts_index, alpha=0.05):
         """
         Forecast the model beyond the fitted dataset
-
-        Parameters
-        ----------
-        ts_index : array_like
-            Time index information for the forecasting window.
-
-        Returns
-        -------
-        forecast
-            Forecasted results, shape (len(ts_index), 1)
-        """
-        X_fourier = fourier_features(ts_index, m = self.harmonic_m, k = self.harmonic_k)
-        results = self.fitted_model.get_forecast(steps = len(ts_index), exog = X_fourier)
-        return results.predicted_mean
-    
-    def conf_int(self, ts_index, alpha=0.05):
-        """
-        Confidence interval for model forecast.
 
         Parameters
         ----------
@@ -108,14 +90,17 @@ class HarmonicARIMA:
 
         Returns
         -------
-        conf_int
-            Confidence interval for forecast, shape (len(ts_index), 2)
+        forecasts : array_like
+            Forecast, Upper bound, and lower bound associated with the confidence interval
+            for the forecast, each of shape (len(ts_index),).
         """
         X_fourier = fourier_features(ts_index, m = self.harmonic_m, k = self.harmonic_k)
         results = self.fitted_model.get_forecast(steps = len(ts_index), exog = X_fourier)
-        return results.conf_int(alpha=alpha)
+        ci = results.conf_int(alpha=alpha)  # alpha=alpha → 100*(1-alpha)% CI
+        lower_ci = ci.iloc[:, 0]
+        upper_ci = ci.iloc[:, 1]
+        return results.predicted_mean, lower_ci, upper_ci
 
-# STL + ARIMA model 
 class STLArima:
     def __init__(self, season_length, arima_order, seasonal_order):
         """
@@ -148,7 +133,8 @@ class STLArima:
         self.trend_resid = stl_fit.trend + stl_fit.resid 
         self.model = ARIMA(self.trend_resid, order=self.arima_order, seasonal_order=self.seasonal_order).fit()
     def forecast(self, h, alpha=0.05):
-        """Forecast the model beyond the fitted dataset
+        """
+        Forecast the model beyond the fitted dataset
         
         Parameters
         ----------
@@ -175,4 +161,3 @@ class STLArima:
         lower_bound = lower_ci.values + seasonal_forecast
         upper_bound = upper_ci.values + seasonal_forecast
         return forecasts, upper_bound, lower_bound
-
