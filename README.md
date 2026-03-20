@@ -43,7 +43,37 @@ Our exploratory data analysis involved visualizing TSA Throughput data specifica
 
 The hourly data seems far too noisy to make meaningful predictions and also involves timeframes too small for long-term forecasting. This convinced us to focus only on modeling the daily and weekly data.
 
+We can also look at the data across multiple airports.
 
+![airports_daily](./images/airports_daily.png "Daily Throughput Data - All Checkpoints")
+![airports_weekly](./images/airports_weekly.png "Weekly Throughput Data - All Checkpoints")
+
+Clearly the different airports carry very similar trends. This means a model that works well on one airport may also work well on other airports.
+
+Next we looked at the autocorrelation and partial autocorrelation functions for the daily TSA throughput data.
+
+![daily_acf](./images/daily_acf.png "Daily Throughput Data - Autocorrelation")
+![daily_pacf](./images/daily_pacf.png "Daily Throughput Data - Partial Autocorrelation")
+
+Here note from the autocorrelation that there is a large spike at every 7 lags and another large spike after 365 lags. This indicates both a weekly and annual seasonality in the daily data.
+
+We can also look at the ACF and PACF for the weekly data.
+
+![weekly_acf](./images/weekly_acf.png "Weekly Throughput Data - ACF and PACF")
+
+Here we observe that the dominant lags are the small lags (below about 5-6) and again there is annual seasonality indicated by a spike at lag 52.
+
+Even though these models are clearly note stationary, we can model the seasonailty using either STL decomposition or SARIMA model, leaving the remaining residuals to be approximately stationary.
+
+### Baseline Models
+
+For our baseline models, we chose to use the Naive Seasonal Model with Drift and the Triple Exponential Smoothing model. These are simple enough models that are able to capture the annual seasonality and overall trend that we see in the passenger data.
+
+![baseline_compare](./images/baseline_compare.png "Comparing Baselines - Daily Throughput Data")
+![baseline_forecasts](./images/baseline_forecasts.png "Comparing Baseline Forecasts")
+![baseline_weekly](./images/baseline_weekly.png "Baseline models on weekly data")
+
+Clearly with the weekly data the baseline models do a much better job of matching the trend. These are the models that we aimed to beat with our own approaches.
 
 ---
 ## Modeling Approach
