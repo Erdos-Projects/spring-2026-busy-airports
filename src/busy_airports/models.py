@@ -4,8 +4,12 @@ models.py
 Forecasting models for TSA data
 """
 
+from tkinter.filedialog import test
+
 import numpy as np
 import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.seasonal import STL
 from statsmodels.tsa.api import SARIMAX
 from busy_airports.harmonic_model import fourier_features
 
@@ -111,20 +115,64 @@ class HarmonicARIMA:
         results = self.fitted_model.get_forecast(steps = len(ts_index), exog = X_fourier)
         return results.conf_int(alpha=alpha)
 
-# STL model with Daily Data
-class STLDaily:
-    def __init__(self, season_length):
-        pass
-    def fit(self, ts):
-        pass
-    def forecast(self, h):
-        pass
+# STL + ARIMA model 
+class STLArima:
+    def __init__(self, season_length, arima_order, seasonal_order):
+        """
+        Initialize the STL + ARIMA model.
 
-# STL model with Weekly Data
-class STLWeekly:
-    def __init__(self, season_length):
-        pass
+        Parameters
+        ----------
+        season_length : int
+            The length of the seasonal cycle.
+        arima_order : iterable
+            The (p,d,q) order of the SARIMA model.
+        seasonal_order : iterable
+            The (P,D,Q,s) order of the seasonal component of the SARIMA model. 
+    
+        """
+        self.arima_order = arima_order
+        self.seasonal_order = seasonal_order
+        self.season_length = season_length
     def fit(self, ts):
-        pass
-    def forecast(self, h):
-        pass
+        """Fit the STL + ARIMA model to the given time series data.
+    
+        Parameters        
+        ----------
+        ts : array_like
+            Time series data used to fit the model.
+        """
+        stl = STL(ts, period=self.season_length, robust=True)
+        stl_fit = stl.fit()
+        self.seasonal = stl_fit.seasonal
+        self.trend_resid = stl_fit.trend + stl_fit.resid 
+        self.model = ARIMA(self.trend_resid, order=self.arima_order, seasonal_order=self.seasonal_order).fit()
+    def forecast(self, h, alpha=0.05):
+        """Forecast the model beyond the fitted dataset
+        
+        Parameters
+        ----------
+        h : int
+            The number of time steps to forecast beyond the fitted dataset.
+        alpha : float
+            The significance level for the confidence interval.
+        Returns
+        -------
+        forecasts : array_like
+            Forecast, Upper bound, and lower bound associated with the confidence interval for the forecast, each of shape (h,).
+        """
+        arima_forecast = self.model.get_forecast(steps=h)
+        trend_resid_forecast = arima_forecast.predicted_mean
+        #confidence intervals for the ARIMA forecast
+        ci = arima_forecast.conf_int(alpha=alpha)  # alpha=alpha → 100*(1-alpha)% CI
+        lower_ci = ci.iloc[:, 0]
+        upper_ci = ci.iloc[:, 1]
+        #Tiling and adding seasonal component back to ARIMA forecast
+        seasonal_cycle    = self.seasonal.values[-self.season_length:]
+        seasonal_forecast = np.tile(seasonal_cycle, int(np.ceil(h / self.season_length)))[:h]
+        #final forecasts
+        forecasts = trend_resid_forecast + seasonal_forecast
+        lower_bound = lower_ci.values + seasonal_forecast
+        upper_bound = upper_ci.values + seasonal_forecast
+        return forecasts, upper_bound, lower_bound
+
