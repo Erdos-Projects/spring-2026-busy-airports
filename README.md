@@ -78,6 +78,12 @@ Clearly with the weekly data the baseline models do a much better job of matchin
 ---
 ## Modeling Approach
 
+To improve over the baseline models we consider the following two models and train them independently for the daily and weekly day :
+
+1. Harmonic regression + (S)ARIMA : We model yearly seasonality with a fourier modes of annual frequency and its harmonics as exogenenous variables while jointly fitting an ARIMA model (possibly with weekly seasonality for the daily data) to capture residual autocorrelation.
+
+2. Seasonal-Trend decomposition + (S)ARIMA : We decompose the time series into seasonal, trend, and residual components using STL (Seasonal-Trend decomposition using LOESS). Following standard practice, we forecast the seasonally adjusted series (trend + residual) with an ARIMA model (with weekly seasonal order for daily data) and independently forecast the seasonal component using a naïve seasonal baseline.
+
 ---
 ## Results
 
