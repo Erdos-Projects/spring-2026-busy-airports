@@ -132,8 +132,24 @@ We obtained the relevant metrics on each time-series split and averaged over all
 
 Clearly these results show that the **STL + (S)ARIMA** model is the best model for forecasting the weekly throughput data. Note that it performs about the same as the exponential smoothing model. This indicates that we struggled to do better than the baseline for the weekly data. Either way, it significantly outperforms the Harmonic + (S)ARIMA model in all metrics.
 
+### Final Model Evaluations
+
+Here we will show the plots and matrics for the following:
+
+- Harmonic SARIMA - Daily holdout data
+- STL + SARIMA - Weekly holdout data
+- Then apply both these models to a few other airports and look at the metrics
+  - DFW
+  - LAX
+  - Chicago Midway?
+  - other airports that may have similar trends
+
 ---
 ## Future Work
+
+We can extend the framework to multiple US airports using a combined time series and regression approach. This expanded model can incorporate both temporal features and static airport characteristics (e.g., geographic location, airport size, regional demographics) to generalize predictions across locations.
+
+Test out other models (Prophet, XGBoost, etc.).
 
 ---
 ## Description of Repository
