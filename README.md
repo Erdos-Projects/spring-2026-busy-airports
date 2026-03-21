@@ -85,7 +85,7 @@ To improve over the baseline models we consider the following two models and tra
 2. Seasonal-Trend decomposition + (S)ARIMA : We decompose the time series into seasonal, trend, and residual components using STL (Seasonal-Trend decomposition using LOESS). Following standard practice, we forecast the seasonally adjusted series (trend + residual) with an ARIMA model (with weekly seasonal order for daily data) and independently forecast the seasonal component using a naïve seasonal baseline.
 
 
-For both models we obtain (S)ARIMA hyperparameters by minimising the Akaike Information Criterion (AIC) using pmdarima.auto_arima. For the harmonic regression model, we select the number of Fourier harmonics K by fitting OLS harmonic regression on two years of data, and validating against the subsequent one year of data, and choosing K that minimises RMSE. We compare the performance of both models by evaluating their respective MAPEs averaged over 6 expanding-window cross-validation splits of the training series, each with a test fold equal to the forecasting horizon (90 days / 13 weeks). In this way we determine which model has better predictive power in comparison to the other.
+For both models we obtain (S)ARIMA hyperparameters by minimising the Akaike Information Criterion (AIC) using `pmdarima.auto_arima`. For the harmonic regression model, we select the number of Fourier harmonics K by fitting OLS harmonic regression on two years of data, and validating against the subsequent one year of data, and choosing K that minimises RMSE. We compare the performance of both models by evaluating their respective MAPEs averaged over 6 expanding-window cross-validation splits of the training series, each with a test fold equal to the forecasting horizon (90 days / 13 weeks). In this way we determine which model has better predictive power in comparison to the other.
 
 Finally we quote the performance of both our models on our test data : the last two quarters of 2025. For each quarter in the test period, we train our models on all that data up to (but excluding) the first day of the quarter and obtain forecasts and confidence intervals for the quarters ahead. 
 ---
@@ -102,22 +102,40 @@ Finally we quote the performance of both our models on our test data : the last 
 
 ```
 spring-2026-busy-airports/
-│
-├── data/
-│   └── tsa-throughput-data-complete.csv
-│
-├── src/
-│   └── preprocessing.py
-│   └── other.py
-|
-├── scripts/
-│   └── cleanup_csv_data.py
-│   └── extract_pdf_data.py
-│
+├── data
+│   ├── tsa-throughput-data-2023-complete.csv
+│   └── tsa-throughput-data-complete.csv
+├── images/
+├── notebooks
+│   ├── Baseline Forecasts.ipynb
+│   ├── eda.ipynb
+│   ├── harmonic_regression_weekly.ipynb
+│   ├── model_evaluation.ipynb
+│   ├── stl_arima_cv_splits.png
+│   ├── STL_forecasts.ipynb
+│   └── STL_weekly_daily.ipynb
+├── project checkpoints
+│   ├── evaluation_plan.md
+│   ├── kpis.md
+│   └── problem_definition.md
+├── scripts
+│   ├── cleanup_csv_data.py
+│   └── extract_pdf_data.py
+├── src
+│   └── busy_airports
+│       ├── __init__.py
+│       ├── baselines.py
+│       ├── data_splits.py
+│       ├── eda.py
+│       ├── metrics.py
+│       ├── models.py
+│       └── preprocessing.py
 ├── busy_airports.ipynb
-│
-├── README.md
-└── environment.yml
+├── environment.yml
+├── harmonic_model.ipynb
+├── LICENSE
+├── pyproject.toml
+└── README.md
 ```
 
 ---
@@ -138,8 +156,14 @@ Using Anaconda
 conda env create -f environment.yml
 conda activate busy_airports
 ```
+3. **Install custom libraries (`src/busy_airports`)**
 
-3. **Open the notebook and run the cells sequentially**
+Running on the `busy_airports` environment, run:
+```bash
+pip install -e .
+```
+
+4. **Open the notebook and run the cells sequentially**
 
 Open the file `busy_airports.ipynb` and execute the cells from top to bottom.
 
