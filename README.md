@@ -103,14 +103,34 @@ We obtained the relevant metrics on each time-series split and averaged over all
 
 #### **Model Evaluation Metrics - Daily (Averaged over Splits)**
 
-| Model                                    | MAE    | MAPE   | RMSE   |
-|------------------------------------------|--------|--------|--------|
-| Naive Seasonal with Drift (baseline)     | 15,263 | 18.82% | 17,905 |
-| Triple Exponential Smoothing (baseline)  | 9,368  | 11.99% | 11,434 |
-| STL + (S)ARIMA                           | 9,190  | 11.65% | 11,430 |
-| Harmonic + (S)ARIMA                      | 6,432  | 7.83%  | 7,984  |
+| Model                                    | MAE [number of passengers per day] | RMSE [number of passengers per day] | MAPE   |
+|------------------------------------------|------------------------------------|-------------------------------------|--------|
+| Naive Seasonal with Drift (baseline)     | 15,263                             | 17,905                              | 18.82% |
+| Triple Exponential Smoothing (baseline)  | 9,368                              | 11,434                              | 11.99% |
+| STL + (S)ARIMA                           | 9,190                              | 11,430                              | 11.65% |
+| Harmonic + (S)ARIMA                      | 6,432                              | 7,984                               | 7.83%  |
 
 Clearly these results show that the **Harmonic + (S)ARIMA** model is the strongest model for forecasting the daily throughput data. It beats the baseline models in all metrics and outperforms the STL + (S)ARIMA model.
+
+### Weekly Throughput Data
+
+Next we apply the same models to the weekly throughput data across each time-series split. The results for each model are shown here:
+
+![stl_arima_weekly_splits](./images/stl_arima_weekly_splits.png "STL ARIMA on each split, weekly data")
+![harmonic_arima_weekly_splits](./images/harmonic_arima_weekly_splits.png "Harmonic ARIMA on each split, weekly data")
+
+We obtained the relevant metrics on each time-series split and averaged over all the splits. The resulting values for the metrics (including our baseline models) are shown here:
+
+#### **Model Evaluation Metrics - Weekly (Averaged over Splits)**
+
+| Model                                    | MAE [number of passengers per week] | RMSE [number of passengers per week] | MAPE  |
+|------------------------------------------|-------------------------------------|--------------------------------------|-------|
+| Naive Seasonal with Drift (baseline)     | 23,728                              | 27,781                               | 4.12% |
+| Triple Exponential Smoothing (baseline)  | 20,940                              | 25,033                               | 3.79% |
+| STL + (S)ARIMA                           | 20,956                              | 25,184                               | 3.74% |
+| Harmonic + (S)ARIMA                      | 24,506                              | 29,601                               | 4.41% |
+
+Clearly these results show that the **STL + (S)ARIMA** model is the best model for forecasting the weekly throughput data. Note that it performs about the same as the exponential smoothing model. This indicates that we struggled to do better than the baseline for the weekly data. Either way, it significantly outperforms the Harmonic + (S)ARIMA model in all metrics.
 
 ---
 ## Future Work
