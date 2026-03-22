@@ -87,7 +87,7 @@ To improve over the baseline models we consider the following two models and tra
 
 For both models we obtain (S)ARIMA hyperparameters by minimising the Akaike Information Criterion (AIC) using `pmdarima.auto_arima`. For the harmonic regression model, we select the number of Fourier harmonics k by fitting OLS harmonic regression on two years of data, validating against the subsequent one year of data, and choosing k that minimises all relevant metrics. We compare the performance of both models by evaluating their respective MAPEs averaged over 6 expanding-window cross-validation splits of the training series, each with a test fold equal to the forecasting horizon (90 days / 13 weeks). In this way we determine which model has better predictive power in comparison to the others.
 
-Finally, we will quote the performance of our final models (daily and weekly) on our test data: the last two quarters of 2025. For each quarter in the test period, we train our models on all that data up to (but excluding) the first day of the quarter and obtain forecasts and confidence intervals for the quarters ahead. We will compare the resulting metrics with those obtained for the cross-validation scripts to assess the reliability and robustness of our models.
+Finally, we will quote the performance of our final models (daily and weekly) on our test data: the last two quarters of 2025. For each quarter in the test period, we train our models on all that data up to (but excluding) the first day of the quarter and obtain forecasts and confidence intervals for the quarter ahead. We will compare the resulting metrics with those obtained for the cross-validation scripts to assess the reliability and robustness of our models.
 
 ---
 ## Results
