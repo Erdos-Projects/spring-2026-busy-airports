@@ -208,9 +208,6 @@ We can further extend our modeling framework to multiple US airports by incorpor
 We can also test out other models like Prophet, XGBoost, etc. 
 
 ---
-## Description of Repository
-
----
 ## Repository Structure
 
 ```
@@ -218,19 +215,24 @@ spring-2026-busy-airports/
 ├── data
 │   ├── tsa-throughput-data-2023-complete.csv
 │   └── tsa-throughput-data-complete.csv
-├── images/
+├── images
+│   └── <PROJECT_IMAGES>.png
 ├── notebooks
 │   ├── Baseline Forecasts.ipynb
 │   ├── eda.ipynb
+│   ├── harmonic_model.ipynb
 │   ├── harmonic_regression_weekly.ipynb
 │   ├── model_evaluation.ipynb
-│   ├── stl_arima_cv_splits.png
+│   ├── sarima_models.ipynb
 │   ├── STL_forecasts.ipynb
 │   └── STL_weekly_daily.ipynb
-├── project checkpoints
+├── project_checkpoints
 │   ├── evaluation_plan.md
 │   ├── kpis.md
 │   └── problem_definition.md
+├── project_deliverables
+│   ├── executive_summary_busy_airports.pdf
+│   └── slide_deck_busy_airport.pdf
 ├── scripts
 │   ├── cleanup_csv_data.py
 │   └── extract_pdf_data.py
@@ -245,7 +247,6 @@ spring-2026-busy-airports/
 │       └── preprocessing.py
 ├── busy_airports.ipynb
 ├── environment.yml
-├── harmonic_model.ipynb
 ├── LICENSE
 ├── pyproject.toml
 └── README.md
