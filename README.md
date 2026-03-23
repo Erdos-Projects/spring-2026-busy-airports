@@ -18,9 +18,10 @@
 
 ---
 ## Introduction
-Airports in the United States serve as critical transportation hubs. handling hundreds of millions of travelers each year. One of the most significant bottlenecks in air travel is the TSA security checkpoint. For TSA directors, accurately forecasting passenger volume is essential for effective staffing and resource allocation. Reliable predictions of daily throughput can also help travelers anticipate longer-than-usual wait times and plan accordingly.
+Airports in the United States serve as critical transportation hubs, handling hundreds of millions of travelers each year. One of the most significant bottlenecks in air travel is the TSA security checkpoint. For TSA directors, accurately forecasting passenger volume is essential for effective staffing and resource allocation. Reliable predictions of daily throughput can also help travelers anticipate longer-than-usual wait times and plan accordingly.
 
-**Objective**: The goal of this project is to develop a predictive model for passenger throughput at TSA security checkpoints. We will begin by building and validating the model for a single airport to establish feasibility and performance. The model will forecast total passenger volume over selected future timescales (e.g. daily, weekly totals) with the flexibility to evaluate which forecasting window (days, weeks, or potentially months) yields the most reliable results. Once the single-airport model performs well, we can extend the framework to multiple US airports to test the robustness of the modeling methods.
+**Objective**: The goal of this project is to develop a predictive model for passenger throughput at TSA security checkpoints. We will begin by building and validating the model for a single airport to establish feasibility and performance. The model will forecast total passenger volume over daily timescales with the flexibility to forecast over different forecasting windows (days, weeks, or potentially months). Once the single-airport model performs well, we can extend the framework to multiple US airports to test the robustness of the modeling methods.
+
 
 **Stakeholders**: TSA, Airport operators/managers who make quarterly funding decisions... (to be filled in later)
 
@@ -35,18 +36,22 @@ The scripts for reading the PDF files, identifying tabulated data, processing th
 ---
 ## Exploratory Data Analysis
 
-Our exploratory data analysis involved visualizing TSA Throughput data specifically at Chicago O'Hare International Airport, which was chosen to be the focus of our modelling approach. We started by plotting the total hourly, daily, and monthly throughput data.
+Our exploratory data analysis involved visualizing TSA Throughput data specifically at Chicago O'Hare International Airport, which was chosen to be the focus of our modelling approach. We started by plotting the total hourly and daily throughput data.
 
 ![ord_hourly](./images/ord_hourly.png "Hourly Throughput Data - ORD, All Checkpoints")
 ![ord_daily](./images/ord_daily.png "Daily Throughput Data - ORD, All Checkpoints")
+<!-- 
 ![ord_weekly](./images/ord_weekly.png "Weekly Throughput Data - ORD, All Checkpoints")
+-->
 
-The hourly data seems far too noisy to make meaningful predictions and also involves timeframes too small for long-term forecasting. This convinced us to focus only on modeling the daily and weekly data.
+The hourly data seems far too noisy to make meaningful predictions and also involves timeframes too small for long-term forecasting. This convinced us to focus only on modeling the data smoothed over daily (or potentially larger) timescales.
 
-We can also look at the data across multiple airports.
+We can also look at the daily data across multiple airports.
 
 ![airports_daily](./images/airports_daily.png "Daily Throughput Data - All Checkpoints")
+<!--
 ![airports_weekly](./images/airports_weekly.png "Weekly Throughput Data - All Checkpoints")
+-->
 
 Clearly the different airports carry very similar trends. This means a model that works well on one airport may also work well on other airports.
 
@@ -57,13 +62,15 @@ Next we looked at the autocorrelation and partial autocorrelation functions for 
 
 Here note from the autocorrelation that there is a large spike at every 7 lags and another large spike after 365 lags. This indicates both a weekly and annual seasonality in the daily data.
 
+<!---
 We can also look at the ACF and PACF for the weekly data.
 
 ![weekly_acf](./images/weekly_acf.png "Weekly Throughput Data - ACF and PACF")
 
 Here we observe that the dominant lags are the small lags (below about 5-6) and again there is annual seasonality indicated by a spike at lag 52.
+-->
 
-Even though these models are clearly note stationary, we can model the seasonailty using either STL decomposition or SARIMA model, leaving the remaining residuals to be approximately stationary.
+Even though these models are clearly not stationary, we can model the seasonailty using either Seasonal Trend decomposition with LOESS (STL) or Harmonic regression model, leaving the remaining residuals to be approximately stationary.
 
 ### Baseline Models
 
@@ -71,23 +78,28 @@ For our baseline models, we chose to use the Naive Seasonal Model with Drift and
 
 ![baseline_compare](./images/baseline_compare.png "Comparing Baselines - Daily Throughput Data")
 ![baseline_forecasts](./images/baseline_forecasts.png "Comparing Baseline Forecasts")
+<!--
 ![baseline_weekly](./images/baseline_weekly.png "Baseline models on weekly data")
+-->
 
-Clearly with the weekly data the baseline models do a much better job of matching the trend. These are the models that we aimed to beat with our own approaches.
+<!--
+Clearly with the weekly data the baseline models do a much better job of matching the trend. 
+-->
+These are the models that we aimed to beat with our own approaches.
 
 ---
 ## Modeling Approach
 
-To improve over the baseline models we consider the following two models and train them independently for the daily and weekly data:
+To improve over the baseline models we consider the following two models and train them independently for the daily data:
 
-1. Harmonic regression + (S)ARIMA : We model yearly seasonality with fourier modes of annual frequency and its harmonics as exogenenous variables while jointly fitting a (S)ARIMA model (possibly with weekly seasonality for the daily data) to capture residual autocorrelation.
+1. Harmonic regression + (S)ARIMA : We model yearly seasonality with fourier modes of annual frequency and its harmonics as exogenenous variables while jointly fitting a (S)ARIMA model (with periodicity of 7 days) to capture residual autocorrelation.
 
-2. Seasonal-Trend decomposition + (S)ARIMA : We decompose the time series into seasonal, trend, and residual components using STL (Seasonal-Trend decomposition using LOESS). Following standard practice, we forecast the seasonally adjusted series (trend + residual) with an ARIMA model (with weekly seasonal order for daily data) and independently forecast the seasonal component using a naïve seasonal baseline.
+2. Seasonal-Trend decomposition + (S)ARIMA : We decompose the time series into seasonal, trend, and residual components using STL (Seasonal-Trend decomposition using LOESS). Following standard practice, we forecast the seasonally adjusted series (trend + residual) with an (S)ARIMA model (with weekly periodicity) and independently forecast the seasonal component using a naïve seasonal baseline.
 
 
-For both models we obtain (S)ARIMA hyperparameters by minimising the Akaike Information Criterion (AIC) using `pmdarima.auto_arima`. For the harmonic regression model, we select the number of Fourier harmonics k by fitting OLS harmonic regression on two years of data, validating against the subsequent one year of data, and choosing k that minimises all relevant metrics. We compare the performance of both models by evaluating their respective MAPEs averaged over 5 expanding-window cross-validation splits of the training series, each with a test fold equal to the forecasting horizon (90 days / 13 weeks). In this way we determine which model has better predictive power in comparison to the others.
+For both models we obtain (S)ARIMA hyperparameters by minimising the Akaike Information Criterion (AIC) using `pmdarima.auto_arima`. For the harmonic regression model, we select the number of Fourier harmonics k by fitting OLS harmonic regression on two years of data, validating against the subsequent one year of data, and choosing k that minimises all relevant metrics. We compare the performance of both models by evaluating their respective MAPEs averaged over 5 expanding-window cross-validation splits of the training series, each with a test fold equal to a forecasting horizon of one quarter (90 days / 13 weeks). In this way we determine which model has better predictive power in comparison to the others.
 
-Finally, we will quote the performance of our final models (daily and weekly) on our test data: the last two quarters of 2025. For each quarter in the test period, we train our models on all that data up to (but excluding) the first day of the quarter and obtain forecasts and confidence intervals for the quarter ahead. We will compare the resulting metrics with those obtained for the cross-validation scripts to assess the reliability and robustness of our models.
+Finally, we will quote the performance of the best model on our test data: the daily passenger throughput during the last two quarters of 2025. For each quarter in the test period, we train our best model on all that data up to (but excluding) the first day of the quarter and obtain forecasts and confidence intervals for the quarter ahead. We will compare the resulting metrics with those obtained from the cross-validation scripts to assess the reliability and robustness of our models.
 
 ---
 ## Results
@@ -112,6 +124,7 @@ We obtained the relevant metrics on each time-series split and averaged over all
 
 Clearly these results show that the **Harmonic + (S)ARIMA** model is the strongest model for forecasting the daily throughput data. It beats the baseline models in all metrics and outperforms the STL + (S)ARIMA model.
 
+<!--
 ### Weekly Throughput Data
 
 Next we apply the same models to the weekly throughput data across each time-series split. The results for each model are shown here:
@@ -131,13 +144,15 @@ We obtained the relevant metrics on each time-series split and averaged over all
 | Harmonic + (S)ARIMA                      | 24,506                | 29,601                 | 4.41%    |
 
 Clearly these results show that the **STL + (S)ARIMA** model is the best model for forecasting the weekly throughput data. Note that it performs about the same as the exponential smoothing model. This indicates that we struggled to do better than the baseline for the weekly data. Either way, it significantly outperforms the Harmonic + (S)ARIMA model in all metrics.
+-->
 
 ### Final Model Evaluations
 
-Here we will show the plots and matrics for the following:
+Here we will show the plots and metrics for the following:
 
 - Harmonic SARIMA - Daily data for ORD
 Plot for the two test periods - Q3 2025 and Q4 2025
+
 ![harmonic_arima_ord_daily_test1](./images/harmonic_arima_ord_daily_test1.png "Harmonic ARIMA daily forecast on Q3 2025")
 ![harmonic_arima_ord_daily_test2](./images/harmonic_arima_ord_daily_test2.png "Harmonic ARIMA daily forecast on Q4 2025")
 
@@ -149,7 +164,8 @@ The relevant metrics we obtained were
 
 - Applying this daily Harmonic ARIMA model to a three other airports, we get the following plots and metrics:
 
-For JFK - 
+For JFK 
+
 ![harmonic_arima_jfk_daily_test1](./images/harmonic_arima_jfk_daily_test1.png "Harmonic ARIMA daily forecast on Q3 2025 for JFK")
 ![harmonic_arima_jfk_daily_test2](./images/harmonic_arima_jfk_daily_test2.png "Harmonic ARIMA daily forecast on Q4 2025 for JFK")
 
@@ -185,7 +201,9 @@ The relevant metrics we obtained were
 ---
 ## Future Work
 
-We can extend the framework to multiple US airports using a combined time series and regression approach. This expanded model can incorporate both temporal features and static airport characteristics (e.g., geographic location, airport size, regional demographics) to generalize predictions across locations.
+We observe that the performance of our best model (namely Harmonic regression + ARIMA) is broadly consistent across all airports suggesting that this model generalises well to airports beyond ORD. 
+
+We can further extend our modeling framework to multiple US airports by incorporating both temporal features and static airport characteristics (e.g., geographic location, airport size, regional demographics) in our regression + ARIMA approach to generalize predictions across disparate locations and airport sizes.
 
 We can also test out other models like Prophet, XGBoost, etc. 
 
