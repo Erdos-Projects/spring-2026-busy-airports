@@ -136,20 +136,58 @@ Clearly these results show that the **STL + (S)ARIMA** model is the best model f
 
 Here we will show the plots and matrics for the following:
 
-- Harmonic SARIMA - Daily holdout data
-- STL + SARIMA - Weekly holdout data
-- Then apply both these models to a few other airports and look at the metrics
-  - DFW
-  - LAX
-  - Chicago Midway?
-  - other airports that may have similar trends
+- Harmonic SARIMA - Daily data for ORD
+Plot for the two test periods - Q3 2025 and Q4 2025
+![harmonic_arima_ord_daily_test1](./images/harmonic_arima_ord_daily_test1.png "Harmonic ARIMA daily forecast on Q3 2025")
+![harmonic_arima_ord_daily_test2](./images/harmonic_arima_ord_daily_test2.png "Harmonic ARIMA daily forecast on Q4 2025")
+
+The relevant metrics we obtained were
+ Test Split   | MAE (passengers/day)  | RMSE (passengers/day)  | MAPE (%) |
+|-------------|-----------------------|------------------------|----------|
+| 1 (Q3 2025) |         5844          |          7345          |   6.42%  |
+| 2 (Q4 2025) |         6469          |          8542          |   8.11%  |
+
+- Applying this daily Harmonic ARIMA model to a three other airports, we get the following plots and metrics:
+
+For JFK - 
+![harmonic_arima_jfk_daily_test1](./images/harmonic_arima_jfk_daily_test1.png "Harmonic ARIMA daily forecast on Q3 2025 for JFK")
+![harmonic_arima_jfk_daily_test2](./images/harmonic_arima_jfk_daily_test2.png "Harmonic ARIMA daily forecast on Q4 2025 for JFK")
+
+The relevant metrics we obtained were
+ Test Split   | MAE (passengers/day)  | RMSE (passengers/day)  | MAPE (%) |
+|-------------|-----------------------|------------------------|----------|
+| 1 (Q3 2025) |         4033          |          5784          |   4.29%  |
+| 2 (Q4 2025) |         5002          |          6643          |   5.69%  |
+
+For DFW
+
+![harmonic_arima_dfw_daily_test1](./images/harmonic_arima_dfw_daily_test1.png "Harmonic ARIMA daily forecast on Q3 2025 for DFW")
+![harmonic_arima_dfw_daily_test2](./images/harmonic_arima_dfw_daily_test2.png "Harmonic ARIMA daily forecast on Q4 2025 for DFW")
+
+The relevant metrics we obtained were
+ Test Split   | MAE (passengers/day)  | RMSE (passengers/day)  | MAPE (%) |
+|-------------|-----------------------|------------------------|----------|
+| 1 (Q3 2025) |         4114          |          5253          |   5.78%  |
+| 2 (Q4 2025) |         6366          |          8471          |   9.38%  |
+
+
+For LAX
+
+![harmonic_arima_lax_daily_test1](./images/harmonic_arima_lax_daily_test1.png "Harmonic ARIMA daily forecast on Q3 2025 for LAX")
+![harmonic_arima_lax_daily_test2](./images/harmonic_arima_lax_daily_test2.png "Harmonic ARIMA daily forecast on Q4 2025 for LAX")
+
+The relevant metrics we obtained were
+ Test Split   | MAE (passengers/day)  | RMSE (passengers/day)  | MAPE (%) |
+|-------------|-----------------------|------------------------|----------|
+| 1 (Q3 2025) |         4439          |          6988          |   4.85%  |
+| 2 (Q4 2025) |         6661          |          9303          |   7.36%  |
 
 ---
 ## Future Work
 
 We can extend the framework to multiple US airports using a combined time series and regression approach. This expanded model can incorporate both temporal features and static airport characteristics (e.g., geographic location, airport size, regional demographics) to generalize predictions across locations.
 
-Test out other models (Prophet, XGBoost, etc.).
+We can also test out other models like Prophet, XGBoost, etc. 
 
 ---
 ## Description of Repository
