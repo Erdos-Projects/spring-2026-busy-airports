@@ -232,7 +232,7 @@ spring-2026-busy-airports/
 │   └── problem_definition.md
 ├── project_deliverables
 │   ├── executive_summary_busy_airports.pdf
-│   └── slide_deck_busy_airport.pdf
+│   └── slide_deck_busy_airports.pdf
 ├── scripts
 │   ├── cleanup_csv_data.py
 │   └── extract_pdf_data.py
